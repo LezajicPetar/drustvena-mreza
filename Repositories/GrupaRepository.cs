@@ -42,8 +42,9 @@ namespace drustvena_mreza.Repositories
 
             foreach (string line in clanstva)
             {
-                int clanId = line[0];
-                int grupaId = line[1];
+                string[] info = line.Split(",");
+                int clanId = int.Parse(info[0]);
+                int grupaId = int.Parse(info[1]);
 
                 Data[grupaId].ListaKorisnika.Add(KorisnikRepository.Data[clanId]);
             }
