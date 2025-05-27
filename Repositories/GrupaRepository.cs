@@ -33,7 +33,10 @@ namespace drustvena_mreza.Repositories
                 Grupa g = new Grupa(id, ime, datumOsnivanja);
                 Data.Add(id, g);
             }
+            KorisnikRepository korisnikRepo = new KorisnikRepository();
+
             PoveziClanoveGrupe();
+
         }
 
         private void PoveziClanoveGrupe()
@@ -42,14 +45,25 @@ namespace drustvena_mreza.Repositories
 
             foreach (string line in clanstva)
             {
+                if (string.IsNullOrWhiteSpace(line)) continue;
+
                 string[] info = line.Split(",");
+                if (info.Length != 2) continue;
+
                 int clanId = int.Parse(info[0]);
                 int grupaId = int.Parse(info[1]);
 
+                if (!Data.ContainsKey(grupaId)) continue;
+                if (!KorisnikRepository.Data.ContainsKey(clanId)) continue;
+
+                if (Data[grupaId].ListaKorisnika == null)
+                    Data[grupaId].ListaKorisnika = new List<Korisnik>();
+
                 Data[grupaId].ListaKorisnika.Add(KorisnikRepository.Data[clanId]);
+
+                Console.WriteLine($"Dodajem korisnika {clanId} u grupu {grupaId}");
             }
         }
-
         public void Save()
         {
             List<string> lines = new List<string>();
